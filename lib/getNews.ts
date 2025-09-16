@@ -1,56 +1,52 @@
 import Parser from "rss-parser";
 
-export type NewsItem = {
-  title: string;
-  link: string;
-  pubDate: string;
-  source: string;
-  image?: string;
+type FeedItem = {
+    title: string;
+    link: string;
+    pubDate: string;
+    contentSnippet: string;
+    enclosure?: { url: string };
 };
 
-const parser: Parser = new Parser({
-  customFields: {
-    item: [
-      ["media:content", "mediaContent"],
-      ["media:thumbnail", "mediaThumbnail"],
-    ],
-  },
-});
+const feeds = [
+    "https://blog.playstation.com/feed/",
+    "https://www.nintendo.com/feeds/news",
+    "https://news.xbox.com/en-us/feed/",
+];
 
-export async function getNews(): Promise<NewsItem[]> {
-  const feeds = [
-    { url: "https://www.nintendo.com/feeds/news.xml", source: "Nintendo" },
-    { url: "https://blog.playstation.com/feed/", source: "PlayStation" },
-    { url: "https://news.xbox.com/en-us/feed/", source: "Xbox" },
-  ];
+function extractImageFromContent(content?: string): string | undefined {
+    if (!content) return undefined;
+    const match = content.match(/<img[^>]+src="([^">]+)"/i);
+    return match ? match[1] : undefined;
+}
 
-  const allNews: NewsItem[] = [];
+export async function getNews(): Promise<FeedItem[]> {
+    const parser = new Parser({ customFields: { item: ["enclosure", "content:encoded"] } });
+    const allItems: FeedItem[] = [];
 
-  for (const feed of feeds) {
-    try {
-      const parsed = await parser.parseURL(feed.url);
+    for (const url of feeds) {
+        try {
+            const feed = await parser.parseURL(url);
+            const items = feed.items.map((item: any) => {
+                const image =
+                    (item.enclosure?.url as string) ||
+                    extractImageFromContent(item["content:encoded"] || item.contentSnippet);
 
-      parsed.items.forEach((item) => {
-        if (item.title && item.link) {
-          allNews.push({
-            title: item.title,
-            link: item.link,
-            pubDate: item.pubDate || "",
-            source: feed.source,
-            image:
-              (item.enclosure?.url as string) ||
-              (item["mediaContent"]?.$?.url as string) ||
-              (item["mediaThumbnail"]?.$?.url as string) ||
-              undefined,
-          });
+                return {
+                    title: item.title ?? "Sem título",
+                    link: item.link ?? "#",
+                    pubDate: item.pubDate ?? "",
+                    contentSnippet: item.contentSnippet ?? "",
+                    enclosure: image ? { url: image } : undefined,
+                };
+            });
+            allItems.push(...items);
+        } catch (err) {
+            console.error(`Erro ao buscar feed ${url}`, err);
         }
-      });
-    } catch (error) {
-      console.error(`Erro ao buscar feed de ${feed.source}:`, error);
     }
-  }
 
-  return allNews.sort(
-    (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
-  );
+    return allItems.sort(
+        (a, b) => new Date(b.pubDate).getTime() - new Date(a.pubDate).getTime()
+    );
 }
