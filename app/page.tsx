@@ -1,6 +1,5 @@
-import ThemeProvider from "./components/ThemeProvider";
-import NewsCard from "./components/NewsCard";
 import { getNews } from "@/lib/getNews";
+import NewsCard from "./components/NewsCard";
 import ScrollToTopButton from "./components/ScrollToTopButton";
 
 export default async function HomePage() {
