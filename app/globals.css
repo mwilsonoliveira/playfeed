@@ -34,3 +34,7 @@ body::-webkit-scrollbar-track {
 html.dark body::-webkit-scrollbar-track {
   background-color: #374151; /* gray-700 */
 }
+
+button {
+  cursor: pointer;
+}
