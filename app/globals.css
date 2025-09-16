@@ -1,1 +1,36 @@
 @import "tailwindcss";
+
+/* Light theme padrão */
+html {
+  background-color: #f9fafb; /* bg-gray-50 */
+  color: #111827; /* text-gray-900 */
+  font-family: sans-serif;
+}
+
+/* Dark theme */
+html.dark {
+  background-color: #11171f; /* bg-gray-800 */
+  color: #f9fafb; /* text-gray-50 */
+}
+
+/* Scrollbar (opcional) */
+body::-webkit-scrollbar {
+  width: 8px;
+}
+
+body::-webkit-scrollbar-thumb {
+  background-color: #cbd5e1; /* gray-300 */
+  border-radius: 4px;
+}
+
+html.dark body::-webkit-scrollbar-thumb {
+  background-color: #4b5563; /* gray-600 */
+}
+
+body::-webkit-scrollbar-track {
+  background-color: #f3f4f6; /* gray-100 */
+}
+
+html.dark body::-webkit-scrollbar-track {
+  background-color: #374151; /* gray-700 */
+}

@@ -20,7 +20,8 @@ export default function NewsCard({
       href={link}
       target="_blank"
       rel="noopener noreferrer"
-      className="block border rounded-xl shadow-md p-4 hover:shadow-lg transition bg-white dark:bg-gray-900 w-full"
+      className="block dark:border border-gray-500 rounded-xl shadow-md p-4 hover:shadow-lg transition 
+           bg-white dark:bg-gray-800 text-gray-800 dark:text-gray-200 w-full"
     >
       {image && (
         <img
@@ -37,7 +38,7 @@ export default function NewsCard({
       <p className="text-sm text-gray-600 dark:text-gray-400">
         {contentSnippet}
       </p>
-      <span className="text-xs text-gray-400 mt-2 block">
+      <span className="text-xs text-gray-200 mt-2 block">
         {new Date(pubDate).toLocaleDateString("pt-BR")}
       </span>
     </a>
